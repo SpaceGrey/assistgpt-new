@@ -55,7 +55,7 @@ const nextRun = index => {
 }
 
 const needRun = index => {
-  if (msg.props?.current_task === null && index === 0) {
+  if (msg.props?.current_task === -1 && index === 0) {
     return true
   }
 

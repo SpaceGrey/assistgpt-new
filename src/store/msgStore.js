@@ -24,7 +24,7 @@ export const useMsgStore = defineStore('msgStore', () => {
 
   function updateLastTaskMsg(task, taskVersion) {
     const find = findLastTaskMsg()
-
+    console.log(task)
     if (lastVersion !== taskVersion || find < 0) {
       push({
         type: 'server',

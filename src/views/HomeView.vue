@@ -180,6 +180,7 @@ const registerEvents = () => {
     msgStore.removeAllServerTyping()
 
     nextTick(() => {
+      console.log(task)
       taskStore.useTask(task)
       msgStore.updateLastTaskMsg(task, taskStore.version)
     })
