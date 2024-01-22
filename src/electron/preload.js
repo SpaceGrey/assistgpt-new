@@ -5,5 +5,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   sendQuery: query => ipcRenderer.send('query', query),
 
+  setAutomatic:automatic=>ipcRenderer.send('automatic',automatic),
+
   onTaskEvent: callback => ipcRenderer.on('task', (_event, value) => callback(value)),
 })

@@ -19,13 +19,15 @@ def simplify_window_names(names):
         # Split the name by '-' and strip whitespace
         parts = [part.strip() for part in name.split('-')]
         # Use the part after the last '-' if available, otherwise the original name
-        simplified_name = parts[-1] if len(parts) > 1 else name
+        simplified_name = parts[0] if len(parts) > 1 else name
         simplified_names.append(simplified_name)
     return simplified_names
 
 window_names = get_all_windows()
 res = json.dumps(window_names)
 print(res)`
+let automaticRunning = false
+let myQuery = null
 const pythonScriptPath = path.join(app.getAppPath(), 'src', 'get_data.py');
 import { spawn }  from 'child_process'
 function runCode(
@@ -110,15 +112,30 @@ function reloadingUI(data){
     runCode(code,"",false,false)
     .then((result) => {
       console.log("has result")
+      if(!automaticRunning)
+     { 
       myWindow.focus()
       myWindow.setAlwaysOnTop(true)
+    }
+  })
+  if (automaticRunning && data.tasks.length != data.current_task + 1){
+    runCode(pythonScriptPath,myQuery.query,myQuery.is_plan,myQuery.is_retry,myQuery.software,false)
+    .then(async(res)=>{
+      startHttpRequestInterval()
     })
+    if (data.tasks.length == data.current_task + 1){
+      stopHttpRequestInterval()
+    }
+  }
   }
   else{
       myWindow.focus()
       myWindow.setAlwaysOnTop(true)
   }
-    stopHttpRequestInterval()
+  if (!automaticRunning){
+  stopHttpRequestInterval()
+  }
+
   }
 }
 const createWindow = () => {
@@ -144,16 +161,20 @@ const createWindow = () => {
     window.setAlwaysOnTop(false)
     window.blur()
     console.log(query)
-    console.log("testing")
     //check query.is_retry has value or not
     if(query.is_retry == undefined){
       query.is_retry = false
     }
+    myQuery = query
     runCode(pythonScriptPath,query.query,query.is_plan,query.is_retry,query.software,false)
     .then(async(res)=>{
       window.focus()
       startHttpRequestInterval()
     })
+  })
+  ipcMain.on('automatic',(event,automatic)=>{
+    console.log(automatic)
+    automaticRunning = automatic
   })
   // 加载 index.html
   // todo

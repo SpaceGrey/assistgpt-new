@@ -2,7 +2,7 @@
   <main class="tw-pb-20">
     <div class="tw-fixed tw-top-0 tw-left-0 tw-right-0 tw-p-2 tw-flex tw-justify-center">
       <span class="tw-cursor-pointer tw-rounded-3xl tw-bg-green-600 tw-text-white tw-px-6 tw-py-2" @click="reset">
-        Reset
+        {{ isAutomatedRunning ? 'Automatic' : 'Step by Step' }}
       </span>
     </div>
 
@@ -50,13 +50,13 @@
 </template>
 
 <script setup>
-import {reactive, ref, unref, nextTick, onMounted} from 'vue'
+import {reactive, ref, unref, nextTick, onMounted,watch} from 'vue'
 import Msg from '@/components/Msg.vue'
 import {useTaskStore} from '@/store/taskStore.js'
 import {useMsgStore} from '@/store/msgStore.js'
 
 const msgWrapper = ref(null)
-
+const isAutomatedRunning = ref(false)
 const content = ref('')
 const submitStyle = reactive({
   opacity: 0.5
@@ -127,6 +127,11 @@ const submit = () => {
 const startTask = () => {
   continueTask()
 }
+//watch isAutomatedRunning
+watch(isAutomatedRunning, (val) => {
+  console.log(val)
+  window.electronAPI.setAutomatic(val)
+})
 
 const continueTask = () => {
   window.electronAPI.sendQuery({
@@ -146,8 +151,9 @@ const retryTask = () => {
 }
 
 const reset = () => {
-  msgStore.reset()
-  taskStore.reset()
+  isAutomatedRunning.value = !isAutomatedRunning.value
+  // msgStore.reset()
+  // taskStore.reset()
 }
 
 const finishTask = () => {
