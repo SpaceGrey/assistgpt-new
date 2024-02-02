@@ -132,10 +132,7 @@ function reloadingUI(data){
       myWindow.focus()
       myWindow.setAlwaysOnTop(true)
   }
-  if (!automaticRunning){
   stopHttpRequestInterval()
-  }
-
   }
 }
 const createWindow = () => {
@@ -146,7 +143,7 @@ const createWindow = () => {
     menuBarVisible: false,
     autoHideMenuBar: true,
     webPreferences: {
-      devTools: true,
+      devTools: false,
       webSecurity: false,
       allowRunningInsecureContent: true,
       preload: path.join(path.resolve(), '/src/electron/preload.js'),

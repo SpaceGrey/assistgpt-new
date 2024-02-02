@@ -1,0 +1,6 @@
+pygetwindow
+pywinauto
+requests
+uiautomation
+pyauto
+termcolor
